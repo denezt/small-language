@@ -1,0 +1,9 @@
+# Local Files
+temp/**
+tmp/**
+.backup
+
+# Generated files
+*.log
+
+

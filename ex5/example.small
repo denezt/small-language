@@ -1,0 +1,33 @@
+hello = (subject) => {
+  print(concat("Hello, " subject))
+}
+
+// This is a comment
+
+doIt = () => {
+  print("Do it!")
+}
+
+doIt()
+
+hello("Brother")
+
+classmates = split("I seen a cat jump over the bush")
+
+each(classmates (peep)) =>
+  print(concat("awake"))
+)
+
+fib = (n) =>
+  if(eq(n 1))
+    () => 1
+    () =>
+      if(eq(n 2))
+        () => 1
+        () =>
+          add(
+            fib(subtract(n 1))
+            fib(subtract(n 2))
+          )
+      )
+  )

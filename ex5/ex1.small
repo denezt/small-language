@@ -1,0 +1,5 @@
+name = "Will"
+age = 4
+favorite_color = "Yellow"
+sum = add(1 multiply(2 subtract(4 3)))
+print("This sum is " sum)
