@@ -6,6 +6,7 @@ if [ ! -z "${_src}" -a -f "${_src}.small" ];
 then
 	find . -type f -name "${_src}.js" -delete
 	find . -type f -name "${_src}*.ast" -delete
+	rm -rfv small.js
 	npm run gen-parser
 	node run.js "${_src}.small"
 else

@@ -29,4 +29,6 @@ async function myExec(command){
   }
 }
 
+// Main execution
 main().catch(err => console.log(err.stack));
+

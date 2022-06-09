@@ -1,7 +1,7 @@
 const nearley = require("nearley");
 const grammar = require("./small.js");
 const fs = require('mz/fs');
-const debug = false;
+const debug = true;
 
 async function main(){
   const filename = process.argv[2];

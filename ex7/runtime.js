@@ -33,3 +33,7 @@ function pow(x, y){
 function eq(x, y){
   return x === y;
 }
+
+function unique_sort(){
+	return true;
+}

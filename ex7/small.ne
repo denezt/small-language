@@ -5,16 +5,12 @@ const myLexer = require("./lexer");
 @lexer myLexer
 
 statements
-  -> _ statement _
+  -> _ml statement (__lb_ statement):* _ml
   {%
       (data) => {
-        return [data[1]];
-      }    
-  %}
-  | statements %NL _ statement _
-  {%
-      (data) => {
-        return [...data[0], data[3]];
+        const repeated = data[2];
+        const restStatements = repeated.map(chunks => chunks[2]);
+        return [data[1], ...restStatements];
       }    
   %}
   
@@ -33,7 +29,7 @@ var_assign
       }
     }
   %}
-  | %identifier _ "=" _ expr %NL
+  | %identifier _ "=" _ expr __ml
   {%
     (data) => {
       return {
@@ -45,7 +41,7 @@ var_assign
   %}
 
 function_call
-  -> %identifier _ "(" _ (arg_list _):?  ")"
+  -> %identifier _ "(" _ml (arg_list _ml):?  ")" _ml
   {%
     (data) => {
       return {
@@ -63,7 +59,7 @@ arg_list
       return [data[0]];
     }   
   %}
-  | arg_list __ expr
+  | arg_list __ml expr
   {%
     (data) => {
       return [...data[0], data[2]];
@@ -77,45 +73,29 @@ expr
   | function_call   {% id %}
   | lambda          {% id %}
 
-lambda 
-  -> "(" _ (param_list _):? ")" _ "=>" _lb lambda_body
+lambda -> "(" _ (param_list _):? ")" _ "=>" _ml lambda_body _ml
   {% 
     (data) => {
       return {
         type: "lambda",
         parameters: data[2] ? data[2][0] : [],
-        body: data[8]
+        body: data[7]
       }
     }
   %}
 
-
 param_list
   -> %identifier (__ %identifier):*
   {%
-     (data) => {
+    (data) => {
       const repeatedItem = data[1];
       const restParams = repeatedItem.map(piece => piece[1]); 
       return [data[0], ...restParams];
     }
   %}
 
-#param_list
-#  -> %identifier
-#  {%
-#    (data) => {
-#      return [data[0]];
-#    }   
-#  %}
-#  | param_list __ %identifier
-#  {%
-#    (data) => {
-#      return [...data[0], data[2]];
-#    }
-#  %}
-
 lambda_body
-  -> expr 
+  -> expr
   {% 
     (data) => {
       return [data[0]];
@@ -128,7 +108,14 @@ lambda_body
     }
   %}
 
-_lb -> %NL:*
+# Mandatory line-break with optional Whitespace around it
+__lb_ -> (_ %NL):+ _
+
+# Option multi-line Whitespace
+_ml -> (%WS | %NL):*
+
+# Mandatory multi-line Whitespace
+__ml -> (%WS | %NL):+
 
 # Optional Whitespace
 _ -> %WS:*
