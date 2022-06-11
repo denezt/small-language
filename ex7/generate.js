@@ -25,7 +25,7 @@ function generateJsForStatements(statements){
 }
 
 function generateJsForStatementOrExpression(node){
-  console.log(node);
+  // console.log(node);
   if (node.type === "var_assign") {
     const varName = node.var_name.value;
     const jsExpr = generateJsForStatementOrExpression(node.value);
@@ -47,8 +47,6 @@ function generateJsForStatementOrExpression(node){
     let argList = node.parameters.map((arg) => {
       return generateJsForStatementOrExpression(arg);
     }).join(", ");
-    console.log(node.body[0].value);
-    console.log(node.body[0]);
     let lambda_body;
     // () => 1
     if (node.body[0].type === "number"){
@@ -60,8 +58,6 @@ function generateJsForStatementOrExpression(node){
       // () => { func(x, y); }
       lambda_body = generateJsForStatementOrExpression(node.body[0][0]);
     }
-    let obj = JSON.stringify(node.body[0]);
-    console.log(obj);
     const lambda = `(${argList}) => {return ${lambda_body}}`;
     return lambda;
   } else {

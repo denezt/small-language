@@ -15,7 +15,7 @@ async function main(){
   try {
     await myExec(`node ${jsFilename}`);
   } catch (e) {
-    console.error(`Error: ${e.message}`);
+    console.log(`Error: ${e.message}`);
   }
 }
 

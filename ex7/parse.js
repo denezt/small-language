@@ -1,7 +1,7 @@
 const nearley = require("nearley");
 const grammar = require("./small.js");
 const fs = require('mz/fs');
-const debug = true;
+const debug = false;
 
 async function main(){
   const filename = process.argv[2];
@@ -38,7 +38,7 @@ async function main(){
   // parser.results is an array of possible parsings.
   // console.log(parser.results);
   if (debug){
-    console.log(JSON.stringify(parser.results));  
+    console.log(JSON.stringify(parser.results[0]));  
   }  
 }
 

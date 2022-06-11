@@ -5,12 +5,16 @@ const myLexer = require("./lexer");
 @lexer myLexer
 
 statements
-  -> _ml statement (__lb_ statement):* _ml
+  -> _ statement _
   {%
       (data) => {
-        const repeated = data[2];
-        const restStatements = repeated.map(chunks => chunks[2]);
-        return [data[1], ...restStatements];
+        return [data[1]];
+      }    
+  %}
+  | statements %NL _ statement _
+  {%
+      (data) => {
+        return [...data[0], data[3]];
       }    
   %}
   
@@ -29,7 +33,7 @@ var_assign
       }
     }
   %}
-  | %identifier _ "=" _ expr __ml
+  | %identifier _ "=" _ expr %NL
   {%
     (data) => {
       return {
@@ -41,7 +45,7 @@ var_assign
   %}
 
 function_call
-  -> %identifier _ "(" _ml (arg_list _ml):?  ")" _ml
+  -> %identifier _ "(" _ (arg_list _):?  ")" _ml
   {%
     (data) => {
       return {
@@ -59,7 +63,7 @@ arg_list
       return [data[0]];
     }   
   %}
-  | arg_list __ml expr
+  | arg_list __ expr
   {%
     (data) => {
       return [...data[0], data[2]];
@@ -73,7 +77,8 @@ expr
   | function_call   {% id %}
   | lambda          {% id %}
 
-lambda -> "(" _ (param_list _):? ")" _ "=>" _ml lambda_body _ml
+lambda 
+  -> "(" _ (param_list _):? ")" _ "=>" _ lambda_body
   {% 
     (data) => {
       return {
@@ -87,15 +92,29 @@ lambda -> "(" _ (param_list _):? ")" _ "=>" _ml lambda_body _ml
 param_list
   -> %identifier (__ %identifier):*
   {%
-    (data) => {
+     (data) => {
       const repeatedItem = data[1];
       const restParams = repeatedItem.map(piece => piece[1]); 
       return [data[0], ...restParams];
     }
   %}
 
+#param_list
+#  -> %identifier
+#  {%
+#    (data) => {
+#      return [data[0]];
+#    }   
+#  %}
+#  | param_list __ %identifier
+#  {%
+#    (data) => {
+#      return [...data[0], data[2]];
+#    }
+#  %}
+
 lambda_body
-  -> expr
+  -> expr 
   {% 
     (data) => {
       return [data[0]];
@@ -108,14 +127,8 @@ lambda_body
     }
   %}
 
-# Mandatory line-break with optional Whitespace around it
-__lb_ -> (_ %NL):+ _
-
-# Option multi-line Whitespace
-_ml -> (%WS | %NL):*
-
-# Mandatory multi-line Whitespace
-__ml -> (%WS | %NL):+
+# Option Whitespace or Newline
+_ml -> (%WS|%NL):*
 
 # Optional Whitespace
 _ -> %WS:*

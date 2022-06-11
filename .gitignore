@@ -7,3 +7,5 @@ tmp/**
 *.log
 node_modules/**
 package-lock.json
+ex[0-9].ast
+ex[0-9].js

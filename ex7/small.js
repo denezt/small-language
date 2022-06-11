@@ -7,14 +7,14 @@ const myLexer = require("./lexer");
 var grammar = {
     Lexer: myLexer,
     ParserRules: [
-    {"name": "statements$ebnf$1", "symbols": []},
-    {"name": "statements$ebnf$1$subexpression$1", "symbols": ["__lb_", "statement"]},
-    {"name": "statements$ebnf$1", "symbols": ["statements$ebnf$1", "statements$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "statements", "symbols": ["_ml", "statement", "statements$ebnf$1", "_ml"], "postprocess": 
+    {"name": "statements", "symbols": ["_", "statement", "_"], "postprocess": 
         (data) => {
-          const repeated = data[2];
-          const restStatements = repeated.map(chunks => chunks[2]);
-          return [data[1], ...restStatements];
+          return [data[1]];
+        }    
+          },
+    {"name": "statements", "symbols": ["statements", (myLexer.has("NL") ? {type: "NL"} : NL), "_", "statement", "_"], "postprocess": 
+        (data) => {
+          return [...data[0], data[3]];
         }    
           },
     {"name": "statement", "symbols": ["var_assign"], "postprocess": id},
@@ -28,7 +28,7 @@ var grammar = {
           }
         }
           },
-    {"name": "var_assign", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"="}, "_", "expr", "__ml"], "postprocess": 
+    {"name": "var_assign", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"="}, "_", "expr", (myLexer.has("NL") ? {type: "NL"} : NL)], "postprocess": 
         (data) => {
           return {
             type: "var_assign",
@@ -37,10 +37,10 @@ var grammar = {
           }
         }
           },
-    {"name": "function_call$ebnf$1$subexpression$1", "symbols": ["arg_list", "_ml"]},
+    {"name": "function_call$ebnf$1$subexpression$1", "symbols": ["arg_list", "_"]},
     {"name": "function_call$ebnf$1", "symbols": ["function_call$ebnf$1$subexpression$1"], "postprocess": id},
     {"name": "function_call$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "function_call", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_ml", "function_call$ebnf$1", {"literal":")"}, "_ml"], "postprocess": 
+    {"name": "function_call", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_", "function_call$ebnf$1", {"literal":")"}, "_ml"], "postprocess": 
         (data) => {
           return {
             type: "function_call",
@@ -54,7 +54,7 @@ var grammar = {
           return [data[0]];
         }   
           },
-    {"name": "arg_list", "symbols": ["arg_list", "__ml", "expr"], "postprocess": 
+    {"name": "arg_list", "symbols": ["arg_list", "__", "expr"], "postprocess": 
         (data) => {
           return [...data[0], data[2]];
         }
@@ -67,7 +67,7 @@ var grammar = {
     {"name": "lambda$ebnf$1$subexpression$1", "symbols": ["param_list", "_"]},
     {"name": "lambda$ebnf$1", "symbols": ["lambda$ebnf$1$subexpression$1"], "postprocess": id},
     {"name": "lambda$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "lambda", "symbols": [{"literal":"("}, "_", "lambda$ebnf$1", {"literal":")"}, "_", {"literal":"=>"}, "_ml", "lambda_body", "_ml"], "postprocess":  
+    {"name": "lambda", "symbols": [{"literal":"("}, "_", "lambda$ebnf$1", {"literal":")"}, "_", {"literal":"=>"}, "_", "lambda_body"], "postprocess":  
         (data) => {
           return {
             type: "lambda",
@@ -80,7 +80,7 @@ var grammar = {
     {"name": "param_list$ebnf$1$subexpression$1", "symbols": ["__", (myLexer.has("identifier") ? {type: "identifier"} : identifier)]},
     {"name": "param_list$ebnf$1", "symbols": ["param_list$ebnf$1", "param_list$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "param_list", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "param_list$ebnf$1"], "postprocess": 
-        (data) => {
+         (data) => {
           const repeatedItem = data[1];
           const restParams = repeatedItem.map(piece => piece[1]); 
           return [data[0], ...restParams];
@@ -96,23 +96,11 @@ var grammar = {
           return [data[3]];
         }
           },
-    {"name": "__lb_$ebnf$1$subexpression$1", "symbols": ["_", (myLexer.has("NL") ? {type: "NL"} : NL)]},
-    {"name": "__lb_$ebnf$1", "symbols": ["__lb_$ebnf$1$subexpression$1"]},
-    {"name": "__lb_$ebnf$1$subexpression$2", "symbols": ["_", (myLexer.has("NL") ? {type: "NL"} : NL)]},
-    {"name": "__lb_$ebnf$1", "symbols": ["__lb_$ebnf$1", "__lb_$ebnf$1$subexpression$2"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "__lb_", "symbols": ["__lb_$ebnf$1", "_"]},
     {"name": "_ml$ebnf$1", "symbols": []},
     {"name": "_ml$ebnf$1$subexpression$1", "symbols": [(myLexer.has("WS") ? {type: "WS"} : WS)]},
     {"name": "_ml$ebnf$1$subexpression$1", "symbols": [(myLexer.has("NL") ? {type: "NL"} : NL)]},
     {"name": "_ml$ebnf$1", "symbols": ["_ml$ebnf$1", "_ml$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "_ml", "symbols": ["_ml$ebnf$1"]},
-    {"name": "__ml$ebnf$1$subexpression$1", "symbols": [(myLexer.has("WS") ? {type: "WS"} : WS)]},
-    {"name": "__ml$ebnf$1$subexpression$1", "symbols": [(myLexer.has("NL") ? {type: "NL"} : NL)]},
-    {"name": "__ml$ebnf$1", "symbols": ["__ml$ebnf$1$subexpression$1"]},
-    {"name": "__ml$ebnf$1$subexpression$2", "symbols": [(myLexer.has("WS") ? {type: "WS"} : WS)]},
-    {"name": "__ml$ebnf$1$subexpression$2", "symbols": [(myLexer.has("NL") ? {type: "NL"} : NL)]},
-    {"name": "__ml$ebnf$1", "symbols": ["__ml$ebnf$1", "__ml$ebnf$1$subexpression$2"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "__ml", "symbols": ["__ml$ebnf$1"]},
     {"name": "_$ebnf$1", "symbols": []},
     {"name": "_$ebnf$1", "symbols": ["_$ebnf$1", (myLexer.has("WS") ? {type: "WS"} : WS)], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "_", "symbols": ["_$ebnf$1"]},

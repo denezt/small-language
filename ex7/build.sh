@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -x
 
 _src=${1}
 
@@ -7,6 +7,7 @@ then
 	find . -type f -name "${_src}.js" -delete
 	find . -type f -name "${_src}*.ast" -delete
 	rm -rfv small.js
+	[ ! -a "small.js" ] && printf "\033[35mRemoved, 'small.js'\033[0m\n"
 	npm run gen-parser
 	node run.js "${_src}.small"
 else

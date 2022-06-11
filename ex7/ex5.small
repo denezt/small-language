@@ -1,4 +1,10 @@
-fib = (n) =>
-add(n 2)
-result = 3
-print(result)
+f = () => 1
+g = (a b) => add(multiply(2 a) b)
+h = (x y) => {
+  add(multiply(subtract(add(g(x y) 5) 1) 6) 90)
+}
+result = h(3 4)
+print("result = " result)
+print("f = " f())
+print("g(f f) = " g(f() f()))
+print("h(5 7) =" h(5 7))
