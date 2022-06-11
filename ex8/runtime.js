@@ -37,3 +37,12 @@ function eq(x, y){
 function unique_sort(){
 	return true;
 }
+
+function $if(cond, consequent, alternate){
+  if (cond){
+    return consequent();
+  } else {
+    return alternate();
+  }
+  
+}

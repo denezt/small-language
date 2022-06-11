@@ -1,10 +1,7 @@
-f = () => 1
-g = (a b) => add(multiply(2 a) b)
-h = (x y) => {
-  add(multiply(subtract(add(g(x y) 5) 1) 6) 90)
-}
-result = h(3 4)
-print("result = " result)
-print("f = " f())
-print("g(f f) = " g(f() f()))
-print("h(5 7) =" h(5 7))
+a = (n) => multiply(add(n 56) 67)
+print(a(2))
+b = (n) => multiply(add(n 4) 21)
+print(b(2))
+print(eq(9 32))
+fib = () => 
+  if (eq( 5 6))

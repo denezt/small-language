@@ -19,7 +19,7 @@ var grammar = {
           },
     {"name": "statement", "symbols": ["var_assign"], "postprocess": id},
     {"name": "statement", "symbols": ["function_call"], "postprocess": id},
-    {"name": "var_assign", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"="}, "_", "expr"], "postprocess": 
+    {"name": "var_assign", "symbols": ["_ml", (myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"="}, "_", "expr"], "postprocess": 
         (data) => {
           return {
             type: "var_assign",
@@ -67,7 +67,7 @@ var grammar = {
     {"name": "lambda$ebnf$1$subexpression$1", "symbols": ["param_list", "_"]},
     {"name": "lambda$ebnf$1", "symbols": ["lambda$ebnf$1$subexpression$1"], "postprocess": id},
     {"name": "lambda$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "lambda", "symbols": [{"literal":"("}, "_", "lambda$ebnf$1", {"literal":")"}, "_", {"literal":"=>"}, "_", "lambda_body"], "postprocess":  
+    {"name": "lambda", "symbols": [{"literal":"("}, "_", "lambda$ebnf$1", {"literal":")"}, "_", {"literal":"=>"}, "_ml", "lambda_body"], "postprocess":  
         (data) => {
           return {
             type: "lambda",

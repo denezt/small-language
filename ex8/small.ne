@@ -23,7 +23,7 @@ statement
   | function_call {% id %}
   
 var_assign
-  -> %identifier _ "=" _ expr
+  -> _ml %identifier _ "=" _ expr
   {%
     (data) => {
       return {
@@ -78,7 +78,7 @@ expr
   | lambda          {% id %}
 
 lambda 
-  -> "(" _ (param_list _):? ")" _ "=>" _ lambda_body
+  -> "(" _ (param_list _):? ")" _ "=>" _ml lambda_body
   {% 
     (data) => {
       return {

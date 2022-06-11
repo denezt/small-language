@@ -11,12 +11,19 @@ async function main(){
   const astFilename = filename.replace(".small",".ast");
   const jsFilename = filename.replace(".small",".js");
   await myExec(`node parse.js ${filename}`);
-  await myExec(`node generate.js ${astFilename}`);
-  try {
-    await myExec(`node ${jsFilename}`);
-  } catch (e) {
-    console.log(`Error: ${e.message}`);
-  }
+
+  if (fs.existsSync(astFilename)) {
+    // path exists
+    console.log("exists:", astFilename);
+    await myExec(`node generate.js ${astFilename}`);
+    try {
+      await myExec(`node ${jsFilename}`);
+    } catch (e) {
+      console.log(`Error: ${e.message}`);
+    }
+  } else {
+    console.log("DOES NOT exist:", astFilename);
+  }  
 }
 
 async function myExec(command){

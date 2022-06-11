@@ -32,7 +32,10 @@ function generateJsForStatementOrExpression(node){
     const js = `let ${varName} = ${jsExpr};`;
     return js;
   } else if (node.type === "function_call") {
-    const funName = node.func_name.value;
+    let funName = node.func_name.value;
+    if (funName === "if"){
+      funName = "$if";
+    }
     let argList = node.arguments.map((arg) => {
       return generateJsForStatementOrExpression(arg);
     }).join(", ");
@@ -44,25 +47,20 @@ function generateJsForStatementOrExpression(node){
   } else if (node.type === "identifier") {
     return node.value;
   } else if (node.type === "lambda") {
-    let argList = node.parameters.map((arg) => {
+    const paramList = node.parameters.map(param => param.value).join(", ");
+    console.log(node);
+    const jsBody = node.body.map((arg) => {
       return generateJsForStatementOrExpression(arg);
     }).join(", ");
-    let lambda_body;
-    // () => 1
-    if (node.body[0].type === "number"){
-      lambda_body = node.body[0].value;    
-    } else if (node.body[0].type === "function_call") {
-      // () => { func(func(number number) number); }
-      lambda_body = generateJsForStatementOrExpression(node.body[0]);
-    } else {
-      // () => { func(x, y); }
-      lambda_body = generateJsForStatementOrExpression(node.body[0][0]);
-    }
-    const lambda = `(${argList}) => {return ${lambda_body}}`;
-    return lambda;
+    const lambda_body = `return ${jsBody};`;
+    return `function (${paramList}) {\n${indent(lambda_body)}\n}`;
   } else {
     throw new Error(`Unhandled AST node type ${node.type}`);
   }
+}
+
+function indent(string){
+  return string.split("\n").map(line => "\t" + line).join("\n");
 }
 
 main().catch(err => console.error(err.stack));
