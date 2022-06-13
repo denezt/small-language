@@ -23,7 +23,7 @@ statement
   | function_call {% id %}
   
 var_assign
-  -> _ml %identifier _ "=" _ expr
+  -> %identifier _ "=" _ expr
   {%
     (data) => {
       return {

@@ -50,8 +50,9 @@ function generateJsForStatementOrExpression(node){
     const paramList = node.parameters.map(param => param.value).join(", ");
     console.log(node);
     const jsBody = node.body.map((arg) => {
+      console.log(arg.type);
       return generateJsForStatementOrExpression(arg);
-    }).join(", ");
+    }).join(";\n");
     const lambda_body = `return ${jsBody};`;
     return `function (${paramList}) {\n${indent(lambda_body)}\n}`;
   } else {

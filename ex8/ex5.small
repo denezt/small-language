@@ -3,5 +3,5 @@ print(a(2))
 b = (n) => multiply(add(n 4) 21)
 print(b(2))
 print(eq(9 32))
-fib = () => 
+fib = () =>
   if (eq( 5 6))

@@ -19,7 +19,7 @@ var grammar = {
           },
     {"name": "statement", "symbols": ["var_assign"], "postprocess": id},
     {"name": "statement", "symbols": ["function_call"], "postprocess": id},
-    {"name": "var_assign", "symbols": ["_ml", (myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"="}, "_", "expr"], "postprocess": 
+    {"name": "var_assign", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"="}, "_", "expr"], "postprocess": 
         (data) => {
           return {
             type: "var_assign",
